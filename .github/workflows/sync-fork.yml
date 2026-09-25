@@ -1,0 +1,31 @@
+name: Sync fork from upstream
+
+# 上游 yang0/handraw-style 更新后，自动同步到本 fork（fengjunlu618/handraw-style）
+on:
+  schedule:
+    - cron: '0 */6 * * *'   # 每 6 小时检查一次（UTC）
+  workflow_dispatch:        # 也可在 Actions 页手动点击运行
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout fork
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: master
+
+      - name: Sync with upstream
+        uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
+        with:
+          target_repo_token: ${{ secrets.GITHUB_TOKEN }}
+          upstream_repo: yang0/handraw-style
+          upstream_branch: master
+          target_branch: master
+          force_merge: false
+          upstream_pull_args: "--allow-unrelated-histories"
