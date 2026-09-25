@@ -8,7 +8,6 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
   sync:
@@ -21,11 +20,9 @@ jobs:
           ref: master
 
       - name: Sync with upstream
-        uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
-        with:
-          target_repo_token: ${{ secrets.GITHUB_TOKEN }}
-          upstream_repo: yang0/handraw-style
-          upstream_branch: master
-          target_branch: master
-          force_merge: false
-          upstream_pull_args: "--allow-unrelated-histories"
+        run: |
+          git remote add upstream https://github.com/yang0/handraw-style.git || true
+          git fetch upstream master
+          git merge --no-edit upstream/master
+          git push origin master
+          echo "已同步：$(git rev-parse --short HEAD)"
